@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    @apply font-poppins;
+}
+input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+input[type="tel"], textarea{
+    @apply w-full border my-2 py-2 px-4 rounded-2xl;
+}
+
+button {
+    @apply bg-gray-300
+}
+
+button.primary{
+    background-color: #FF385C;
+    @apply w-full rounded-2xl my-2 py-2 px-4 text-white font-semibold
+}
