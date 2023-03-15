@@ -67,13 +67,13 @@ const uploadToS3 = async (path, originalFilename, mimetype) => {
   return `https://${bucket}.s3.amazonaws.com/${newFileName}`;
 };
 
-app.get("/test", (req, res) => {
+app.get("/api/test", (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   res.json("Hello world");
 });
 
 // Registering user
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { name, email, password } = req.body;
 
@@ -91,7 +91,7 @@ app.post("/register", async (req, res) => {
 });
 
 // user login
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
@@ -119,7 +119,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Keep logged in
-app.get("/profile", (req, res) => {
+app.get("/api/profile", (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { token } = req.cookies;
 
@@ -134,12 +134,12 @@ app.get("/profile", (req, res) => {
 });
 
 // Logout
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
 
 // upload image
-app.post("/upload-by-link", async (req, res) => {
+app.post("/api/upload-by-link", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { link } = req.body;
   const newName = "photo" + Date.now() + ".jpg";
@@ -159,19 +159,23 @@ app.post("/upload-by-link", async (req, res) => {
 
 // Uploading files from device
 const photosMiddleware = multer({ dest: "/tmp" });
-app.post("/upload", photosMiddleware.array("photos", 100), async (req, res) => {
-  const uploadedFiles = [];
-  for (let i = 0; i < req.files.length; i++) {
-    const { path, originalname, mimetype } = req.files[i];
+app.post(
+  "/api/upload",
+  photosMiddleware.array("photos", 100),
+  async (req, res) => {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const { path, originalname, mimetype } = req.files[i];
 
-    const url = await uploadToS3(path, originalname, mimetype);
-    uploadedFiles.push(url);
+      const url = await uploadToS3(path, originalname, mimetype);
+      uploadedFiles.push(url);
+    }
+    res.json(uploadedFiles);
   }
-  res.json(uploadedFiles);
-});
+);
 
 // Adding new place
-app.post("/places", async (req, res) => {
+app.post("/api/places", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const {
     title,
@@ -216,7 +220,7 @@ app.post("/places", async (req, res) => {
 });
 
 // getting list of places
-app.get("/places", (req, res) => {
+app.get("/api/places", (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { token } = req.cookies;
   jwt.verify(token, jwtsecret, {}, async (err, data) => {
@@ -228,7 +232,7 @@ app.get("/places", (req, res) => {
 });
 
 // Editing existing place
-app.get("/places/:id", async (req, res) => {
+app.get("/api/places/:id", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { id } = req.params;
 
@@ -236,7 +240,7 @@ app.get("/places/:id", async (req, res) => {
 });
 
 // Update
-app.put("/places", async (req, res) => {
+app.put("/api/places", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { token } = req.cookies;
   const {
@@ -278,13 +282,13 @@ app.put("/places", async (req, res) => {
 });
 
 // get all places
-app.get("/all-places", async (req, res) => {
+app.get("/api/all-places", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   res.json(await Place.find());
 });
 
 // get place by id
-app.get("/travel/:id", async (req, res) => {
+app.get("/api/travel/:id", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { id } = req.params;
 
@@ -292,7 +296,7 @@ app.get("/travel/:id", async (req, res) => {
 });
 
 // do booking
-app.post("/booking", async (req, res) => {
+app.post("/api/booking", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { checkInTime, checkoutTime, numGuests, placeId, userId, totalFees } =
     req.body;
@@ -314,7 +318,7 @@ app.post("/booking", async (req, res) => {
 });
 
 // get my bookings
-app.get("/my-bookings/:id", async (req, res) => {
+app.get("/api/my-bookings/:id", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { id } = req.params;
   try {
@@ -326,7 +330,7 @@ app.get("/my-bookings/:id", async (req, res) => {
 });
 
 // delete my booking
-app.delete("/cancelBooking/:id", async (req, res) => {
+app.delete("/api/cancelBooking/:id", async (req, res) => {
   mongoose.connect(process.env.MONGODB_URL);
   const { id } = req.params;
 
