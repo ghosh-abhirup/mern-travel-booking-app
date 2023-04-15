@@ -55,7 +55,7 @@ const BookingsPage = () => {
                     // console.log(visitData)
                     return (
                         <div className='bg-gray-200 rounded-2xl p-4 flex gap-4 mb-4' key={booking._id}>
-                            <img className='w-1/4 rounded-2xl p-2' src={'http://127.0.0.1:8000/uploads/'+visitData[0].photos[0]} alt="photo" />            
+                            <img className='w-1/4 rounded-2xl p-2' src={visitData[0].photos[0].includes('https://') ? visitData[0].photos[0] : 'http://127.0.0.1:8000/uploads/'+visitData[0].photos[0]} alt="photo" />            
                             <div className='flex flex-col gap-4 w-3/4 p-2'>
                                 <div className='flex gap-2 items-center'>
                                     <p className='font-semibold text-2xl'>Booking Confirmed</p>
