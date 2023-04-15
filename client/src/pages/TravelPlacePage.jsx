@@ -41,7 +41,7 @@ Close photos
                     </div>
                     {travelSite.photos.length>0 && travelSite.photos.map((photo)=>(
                         <div key={photo}>
-                            <img src={'http://127.0.0.1:8000/uploads/'+photo} alt="photo" className='w-4/5 object-cover mx-auto'/>
+                            <img src={photo.includes('https://') ? photo : 'http://127.0.0.1:8000/uploads/'+photo} alt="photo" className='w-4/5 object-cover mx-auto'/>
                         </div>
                     ))}
                 </div>
